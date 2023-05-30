@@ -37,6 +37,25 @@ def predict_api():
     # return the output into json format
     return jsonify(prediction[0])
 
+
+# data from a Front end application
+# routing to a HTML page acts as user interface to receive inputs.
+@app.route('/predict', methods=['POST'])
+def predict():
+    # create a list of inputs data from the HTML page form values
+    # then convert it to float
+    data = [float(x) for x in request.form.values()]
+    # then transform & reshape the list into an array
+    data = np.array(data).reshape(1,-1)
+    # scaling the data 
+    data = scalar.transform(data)
+    # apply LinRegModel to the input data
+    prediction = LinRegModel.predict(data)[0]
+    # return the prediction output to the HTML page by rendering it by using 
+    # a placeholder that captures the value and display it on the page
+    return render_template('home.html', prediction_text = f'price = {prediction}')
+
+
 # to run the application
 if __name__ == '__main__':
     app.run(debug=True)
